@@ -51,7 +51,7 @@ php artisan translation-service:install
 After successfully installing the package, follow these steps to begin using it effectively
 
 ### Translate Language Files
-To translate a language file, use the `translateFile` method provided by the `TranslationService`. This method dispatches translation jobs in batches and returns a batch ID for tracking progress.
+To translate a language file, use the `translateFile` method provided by the `TranslationService`.
 
 ```php
 use Amir\TranslationService\Services\TranslationService;
