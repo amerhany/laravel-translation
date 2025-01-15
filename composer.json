@@ -1,5 +1,5 @@
 {
-    "name": "amir/translation-service",
+    "name": "amerhany/translation-service",
     "description": "A Laravel package for translating text between supported languages.",
     "keywords": [
         "amir",
