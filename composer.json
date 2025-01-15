@@ -5,7 +5,7 @@
         "amir",
         "translation-service"
     ],
-    "homepage": "https://github.com/",
+    "homepage": "https://github.com/amerhany/laravel-translation",
     "license": "MIT",
     "type": "library",
     "authors": [
@@ -49,5 +49,7 @@
                 "TranslationService": "Amir\\TranslationService\\Facades\\TranslationServiceFacade"
             }
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
