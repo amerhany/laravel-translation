@@ -1,8 +1,8 @@
 # Laravel Translation Service
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/amir/translation-service.svg?style=flat-square)](https://packagist.org/packages/amir/translation-service)
-[![Total Downloads](https://img.shields.io/packagist/dt/amir/translation-service.svg?style=flat-square)](https://packagist.org/packages/amir/translation-service)
-[![License](https://img.shields.io/packagist/l/amir/translation-service.svg?style=flat-square)](https://packagist.org/packages/amir/translation-service)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/amir/translation-service.svg?style=flat-square)](https://packagist.org/packages/amerhany/translation-service)
+[![Total Downloads](https://img.shields.io/packagist/dt/amir/translation-service.svg?style=flat-square)](https://packagist.org/packages/amerhany/translation-service)
+[![License](https://img.shields.io/packagist/l/amir/translation-service.svg?style=flat-square)](https://packagist.org/packages/amerhany/translation-service)
 
 A Laravel package for translating text between supported languages using Google Translate. This package allows you to translate language files in bulk and supports queued jobs for efficient processing. It also provides functionality to track the progress of translation jobs, making it easy to display progress on the front end.
 
