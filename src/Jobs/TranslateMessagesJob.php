@@ -19,18 +19,25 @@ class TranslateMessagesJob implements ShouldQueue
     protected $batch;
     protected $sourceLang;
     protected $targetLang;
+    protected $baseLangPath; 
+    protected $fileName; 
 
     /**
      * Create a new job instance.
      *
      * @param array $batch
+     * @param string $sourceLang
      * @param string $targetLang
+     * @param string|null $baseLangPath 
+     * @param string|null $fileName 
      */
-    public function __construct($batch, $sourceLang, $targetLang)
+    public function __construct($batch, $sourceLang, $targetLang, $baseLangPath = null, $fileName = null)
     {
         $this->batch = $batch;
         $this->sourceLang = $sourceLang;
         $this->targetLang = $targetLang;
+        $this->baseLangPath = $baseLangPath;
+        $this->fileName = $fileName ?? 'messages.php';
     }
 
     /**
@@ -44,23 +51,49 @@ class TranslateMessagesJob implements ShouldQueue
         Log::info('Starting translation for batch: ' . json_encode($this->batch));
 
         try {
-            // Translate the batch using the service method
             $translatedBatch = $translationService->translateBatch($this->batch, $this->sourceLang, $this->targetLang);
-            // Append the translated batch to the file
-            $this->appendToFile($translatedBatch);
+
+            if ($this->baseLangPath) {
+                $this->appendToFileCustomPath($this->baseLangPath, $translatedBatch);
+            } else {
+                $this->appendToFile($translatedBatch);
+            }
         } catch (Exception $e) {
             Log::error('Translation failed for batch: ' . $e->getMessage());
         }
     }
 
     /**
-     * Appends the translated batch to the target language file.
-     *
-     * @param array $translatedBatch
+     * Append to default language path
      */
     private function appendToFile($translatedBatch)
     {
-        $filePath = base_path('resources/lang/' . $this->targetLang . '/messages.php');
+        $filePath = base_path('lang/' . $this->targetLang . DIRECTORY_SEPARATOR . $this->fileName);
+        $this->writeToFile($filePath, $translatedBatch);
+    }
+
+    /**
+     * Append to custom base path + targetLang folder
+     */
+    private function appendToFileCustomPath(string $basePath, array $translatedBatch)
+    {
+        $filePath = rtrim($basePath, DIRECTORY_SEPARATOR) 
+            . DIRECTORY_SEPARATOR . $this->targetLang 
+            . DIRECTORY_SEPARATOR . $this->fileName;
+
+        $this->writeToFile($filePath, $translatedBatch);
+    }
+
+    /**
+     * Common method to write translations to file
+     */
+    private function writeToFile(string $filePath, array $translatedBatch)
+    {
+        $dirPath = dirname($filePath);
+
+        if (!is_dir($dirPath)) {
+            mkdir($dirPath, 0755, true);
+        }
 
         $currentContent = [];
         if (file_exists($filePath)) {
@@ -83,6 +116,7 @@ class TranslateMessagesJob implements ShouldQueue
         }
 
         $str = "<?php return " . var_export($updatedContent, true) . ";";
+
         if (file_put_contents($filePath, $str) === false) {
             Log::error("Failed to write to file: " . $filePath);
         }

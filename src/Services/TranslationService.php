@@ -5,6 +5,7 @@ namespace Amir\TranslationService\Services;
 use Amir\TranslationService\Jobs\TranslateMessagesJob;
 use Amir\TranslationService\Helpers\TranslationHelper;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 
 class TranslationService
 {
@@ -15,7 +16,7 @@ class TranslationService
      * @param string $targetLang - The target language code.
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function translateFile($filePath, $sourceLang, $targetLang)
+    public static function translateFile(string $filePath, string $sourceLang, string $targetLang)
     {
         if (!self::isLanguageSupported($sourceLang)) {
             throw new \Exception('The source language ' . $sourceLang . ' is not supported.');
@@ -25,36 +26,42 @@ class TranslationService
             throw new \Exception('The target language ' . $targetLang . ' is not supported.');
         }
 
-        // Load the existing language file
-        if (file_exists($filePath)) {
-            $fullData = include($filePath);
-
-            // Batch the data, assuming batches of 100 items
-            $batches = array_chunk($fullData, 200, true); // true to preserve keys
-
-            // Prepare an array to hold the translation jobs
-            $jobs = [];
-
-            foreach ($batches as $batch) {
-                // Add each batch job to the jobs array
-                $jobs[] = new TranslateMessagesJob($batch, $sourceLang, $targetLang);
-            }
-
-            // Dispatch all jobs as a single batch
-            $batch = Bus::batch($jobs)->dispatch();
-
-            return [
-                'code' => '200',
-                'message' => 'Translation jobs dispatched',
-                'batch_id' => $batch->id,
-                'start_time' => now()->timestamp, // Save start time as a timestamp
-            ];
-        } else {
+        if (!file_exists($filePath)) {
             return response()->json([
                 'code' => '404',
                 'message' => 'File not found'
             ]);
         }
+
+        $fileName = basename($filePath);
+        $langFolderPath = dirname(dirname($filePath));
+
+        $fullData = include($filePath);
+        if (!is_array($fullData)) {
+            throw new \Exception('Invalid language file content.');
+        }
+
+        $batches = array_chunk($fullData, 200, true);
+        $jobs = [];
+
+        foreach ($batches as $batch) {
+            $jobs[] = new TranslateMessagesJob(
+                $batch,
+                $sourceLang,
+                $targetLang,
+                $langFolderPath,
+                $fileName
+            );
+        }
+
+        $batch = Bus::batch($jobs)->dispatch();
+
+        return [
+            'code' => '200',
+            'message' => 'Translation jobs dispatched',
+            'batch_id' => $batch->id,
+            'start_time' => now()->timestamp, // Save start time as a timestamp
+        ];
     }
 
     public static function translateText($text, $sourceLang, $targetLang)
