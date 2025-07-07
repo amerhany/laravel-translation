@@ -1,6 +1,6 @@
 # Laravel Translation Service
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/amir/translation-service.svg?style=flat-square)](https://packagist.org/packages/amerhany/translation-service)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/amerhany/translation-service.svg?style=flat-square)](https://packagist.org/packages/amerhany/translation-service)
 [![Total Downloads](https://img.shields.io/packagist/dt/amir/translation-service.svg?style=flat-square)](https://packagist.org/packages/amerhany/translation-service)
 [![License](https://img.shields.io/packagist/l/amir/translation-service.svg?style=flat-square)](https://packagist.org/packages/amerhany/translation-service)
 
